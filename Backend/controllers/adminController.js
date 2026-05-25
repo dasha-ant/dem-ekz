@@ -13,8 +13,7 @@ const getAllApplications = async (req, res) => {
     } = req.query;
 
     const offset = (page - 1) * limit;
-    
-   
+
     const where = {};
     
     if (status) {
@@ -27,12 +26,11 @@ const getAllApplications = async (req, res) => {
       };
     }
 
-  
     let userWhere = {};
     let includeOptions = {
       model: User,
       as: 'user',
-      attributes: ['id', 'fullName', 'email', 'phone']
+      attributes: ['id', 'fullName', 'email', 'phone', 'username', 'role', 'createdAt']
     };
 
     if (search) {
@@ -40,7 +38,8 @@ const getAllApplications = async (req, res) => {
         [Op.or]: [
           { fullName: { [Op.iLike]: `%${search}%` } },
           { email: { [Op.iLike]: `%${search}%` } },
-          { phone: { [Op.iLike]: `%${search}%` } }
+          { phone: { [Op.iLike]: `%${search}%` } },
+          { username: { [Op.iLike]: `%${search}%` } }
         ]
       };
     }
@@ -93,7 +92,6 @@ const updateApplicationStatus = async (req, res) => {
       });
     }
 
-    
     const allowedStatuses = ['Новая', 'Идет обучение', 'Обучение завершено'];
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({
@@ -104,9 +102,7 @@ const updateApplicationStatus = async (req, res) => {
 
     await application.update({ status });
 
-   
     if (status === 'Обучение завершено') {
-      
       console.log(`Отправка уведомления пользователю ${application.user.email} о завершении курса`);
     }
 
@@ -174,6 +170,25 @@ const getStatistics = async (req, res) => {
       raw: true
     });
 
+    const usersWithApplications = await User.findAll({
+      attributes: [
+        'id',
+        'username',
+        'fullName',
+        'email',
+        'role',
+        [sequelize.fn('COUNT', sequelize.col('applications.id')), 'applicationCount']
+      ],
+      include: [{
+        model: Application,
+        as: 'applications',
+        attributes: [],
+        required: false
+      }],
+      group: ['User.id'],
+      raw: true
+    });
+
     res.json({
       success: true,
       statistics: {
@@ -184,7 +199,8 @@ const getStatistics = async (req, res) => {
         totalUsers,
         recentUsers,
         applicationsByCourse,
-        applicationsOverTime
+        applicationsOverTime,
+        usersWithApplications
       }
     });
   } catch (error) {
@@ -197,8 +213,171 @@ const getStatistics = async (req, res) => {
   }
 };
 
+
+const getAllUsers = async (req, res) => {
+  try {
+    const { 
+      page = 1, 
+      limit = 10, 
+      search,
+      role
+    } = req.query;
+
+    const offset = (page - 1) * limit;
+ 
+    const where = {};
+    
+    if (role) {
+      where.role = role;
+    }
+    
+    if (search) {
+      where[Op.or] = [
+        { fullName: { [Op.iLike]: `%${search}%` } },
+        { email: { [Op.iLike]: `%${search}%` } },
+        { phone: { [Op.iLike]: `%${search}%` } },
+        { username: { [Op.iLike]: `%${search}%` } }
+      ];
+    }
+
+    const { count, rows } = await User.findAndCountAll({
+      where,
+      attributes: { exclude: ['password'] },
+      include: [{
+        model: Application,
+        as: 'applications',
+        attributes: ['id', 'courseName', 'status', 'createdAt']
+      }],
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      order: [['createdAt', 'DESC']]
+    });
+
+    res.json({
+      success: true,
+      users: rows,
+      pagination: {
+        total: count,
+        page: parseInt(page),
+        pages: Math.ceil(count / limit),
+        limit: parseInt(limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get all users error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Ошибка при получении пользователей',
+      error: error.message
+    });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (parseInt(id) === req.user.id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Нельзя удалить собственный аккаунт'
+      });
+    }
+
+    const user = await User.findByPk(id, {
+      include: [{
+        model: Application,
+        as: 'applications'
+      }]
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Пользователь не найден'
+      });
+    }
+
+    if (user.applications && user.applications.length > 0) {
+      await Application.destroy({
+        where: { userId: id }
+      });
+    }
+
+    await user.destroy();
+
+    res.json({
+      success: true,
+      message: 'Пользователь и его заявки успешно удалены'
+    });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Ошибка при удалении пользователя',
+      error: error.message
+    });
+  }
+};
+
+const getUserApplicationsByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findByPk(userId, {
+      attributes: { exclude: ['password'] }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Пользователь не найден'
+      });
+    }
+
+    const applications = await Application.findAll({
+      where: { userId },
+      order: [['createdAt', 'DESC']]
+    });
+
+    res.json({
+      success: true,
+      user: {
+        id: user.id,
+        username: user.username,
+        fullName: user.fullName,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        createdAt: user.createdAt
+      },
+      applications: applications.map(app => ({
+        id: app.id,
+        courseName: app.courseName,
+        startDate: app.startDate,
+        paymentMethod: app.paymentMethod,
+        status: app.status,
+        feedback: app.feedback,
+        rating: app.rating,
+        createdAt: app.createdAt,
+        updatedAt: app.updatedAt
+      }))
+    });
+  } catch (error) {
+    console.error('Get user applications error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Ошибка при получении заявок пользователя',
+      error: error.message
+    });
+  }
+};
+
 module.exports = { 
   getAllApplications, 
   updateApplicationStatus, 
-  getStatistics 
+  getStatistics,
+  getAllUsers,
+  deleteUser,
+  getUserApplicationsByUserId
 };

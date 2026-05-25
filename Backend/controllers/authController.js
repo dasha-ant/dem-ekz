@@ -132,7 +132,7 @@ const adminLogin = async (req, res) => {
     });
     
   } catch (error) {
-    console.error('💥 Ошибка входа администратора:', error.message);
+    console.error(' Ошибка входа администратора:', error.message);
     res.status(500).json({
       success: false,
       message: 'Ошибка при входе администратора'
@@ -182,7 +182,7 @@ const register = async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    console.log('✅ Новый пользователь:', username);
+    console.log(' Новый пользователь:', username);
     
     res.status(201).json({
       success: true,

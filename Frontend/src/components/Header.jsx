@@ -13,7 +13,7 @@ import {
 
 
 const HeaderContainer = styled.header`
-  background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
+  background: linear-gradient(135deg, #940d0d 0%, #993c40 100%);
   box-shadow: 0 2px 8px rgba(234, 88, 12, 0.2);
   position: sticky;
   top: 0;
@@ -56,7 +56,7 @@ const LogoIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ea580c;
+  color: #cc2f37;
   font-size: 1.5rem;
 `;
 
@@ -214,12 +214,12 @@ const MobileNavLink = styled(Link)`
 
   &:hover {
     background: #fef6f1;
-    color: #ea580c;
+    color: #a72344;
   }
 
   &.active {
     background: #fed7aa;
-    color: #9a3412;
+    color: #9b151c;
     font-weight: 600;
   }
 
@@ -367,7 +367,7 @@ const Header = () => {
               style={{ 
                 borderBottom: 'none',
                 background: '#fef6f1',
-                color: '#dc2626'
+                color: '#bbd4f5'
               }}
             >
               <FaSignOutAlt />

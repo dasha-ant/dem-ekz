@@ -10,7 +10,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #fef6f1;
+  background-color: rgb(231, 230, 230);
 }
 
 .app {
@@ -94,13 +94,13 @@ body {
 }
 
 :root {
-  --primary-red: #dc2626;
-  --primary-orange: #ea580c;
-  --primary-light: #fed7aa;
-  --primary-dark: #9a3412;
-  --secondary-red: #ef4444;
-  --secondary-orange: #f97316;
-  --accent-red: #fca5a5;
+  --primary-red: #c70c0c;
+  --primary-orange: #993601;
+  --primary-light: #fff6eb;
+  --primary-dark: #4d1c0c;
+  --secondary-red: #f76161;
+  --secondary-orange: #ad4d08;
+  --accent-red: #d38f8f;
   --accent-orange: #fdba74;
   --background-light: #fef6f1;
   --background-white: #ffffff;

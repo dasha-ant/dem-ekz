@@ -20,10 +20,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      console.log('✅ Токен установлен в axios:', token.substring(0, 20) + '...');
+      console.log(' Токен установлен в axios:', token.substring(0, 20) + '...');
     } else {
       delete axios.defaults.headers.common['Authorization'];
-      console.log('❌ Токен удален из axios');
+      console.log(' Токен удален из axios');
     }
   }, [token]);
 
@@ -31,20 +31,20 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       if (token) {
         try {
-          console.log('🔍 Проверка токена...');
+          console.log(' Проверка токена...');
           const response = await axios.get('/api/auth/me');
           console.log('Ответ от /api/auth/me:', response.data);
           
           if (response.data.success) {
             setUser(response.data.user);
-            console.log('✅ Пользователь загружен:', response.data.user.username);
+            console.log(' Пользователь загружен:', response.data.user.username);
           } else {
-            console.log('❌ Ошибка загрузки пользователя');
+            console.log(' Ошибка загрузки пользователя');
             localStorage.removeItem('token');
             setToken(null);
           }
         } catch (error) {
-          console.error('❌ Ошибка проверки токена:', error.response?.data || error.message);
+          console.error(' Ошибка проверки токена:', error.response?.data || error.message);
           localStorage.removeItem('token');
           setToken(null);
         }
@@ -57,14 +57,14 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      console.log('🚀 Попытка входа:', username);
+      console.log(' Попытка входа:', username);
       
       const response = await axios.post('/api/auth/login', {
         username,
         password
       });
 
-      console.log('📨 Ответ сервера при входе:', response.data);
+      console.log(' Ответ сервера при входе:', response.data);
 
       if (response.data.success) {
         const { user, token } = response.data;
@@ -75,17 +75,17 @@ export const AuthProvider = ({ children }) => {
   
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         
-        console.log('✅ Вход успешен. Токен сохранен.');
+        console.log(' Вход успешен. Токен сохранен.');
         toast.success('Вход выполнен успешно');
         
         return { success: true };
       } else {
-        console.log('❌ Ошибка входа:', response.data.message);
+        console.log(' Ошибка входа:', response.data.message);
         toast.error(response.data.message || 'Ошибка входа');
         return { success: false, message: response.data.message };
       }
     } catch (error) {
-      console.error('💥 Ошибка сети при входе:', error);
+      console.error(' Ошибка сети при входе:', error);
       
       const errorMessage = error.response?.data?.message || 
                           error.message || 
@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }) => {
 
   const adminLogin = async () => {
     try {
-      console.log('👑 Попытка входа администратора...');
+      console.log('Попытка входа администратора...');
       
       const response = await axios.post('/api/auth/admin/login', {
         username: 'Admin',
@@ -129,10 +129,10 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      console.log('📝 Попытка регистрации:', userData.username);
+      console.log(' Попытка регистрации:', userData.username);
       
       const response = await axios.post('/api/auth/register', userData);
-      console.log('📨 Ответ сервера при регистрации:', response.data);
+      console.log('Ответ сервера при регистрации:', response.data);
 
       if (response.data.success) {
         const { user, token } = response.data;
@@ -143,17 +143,17 @@ export const AuthProvider = ({ children }) => {
 
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         
-        console.log('✅ Регистрация успешна');
+        console.log(' Регистрация успешна');
         toast.success('Регистрация успешна!');
         
         return { success: true };
       } else {
-        console.log('❌ Ошибка регистрации:', response.data.message);
+        console.log(' Ошибка регистрации:', response.data.message);
         toast.error(response.data.message || 'Ошибка при регистрации');
         return { success: false, message: response.data.message };
       }
     } catch (error) {
-      console.error('💥 Ошибка при регистрации:', error.response?.data || error.message);
+      console.error(' Ошибка при регистрации:', error.response?.data || error.message);
 
       let errorMessage = 'Ошибка при регистрации';
       
@@ -171,7 +171,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    console.log('👋 Выход из системы');
+    console.log(' Выход из системы');
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);

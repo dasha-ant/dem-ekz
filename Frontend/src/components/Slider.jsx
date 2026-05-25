@@ -9,7 +9,7 @@ const SliderContainer = styled.div`
   border-radius: 20px;
   margin: 3rem 0;
   box-shadow: 0 8px 32px rgba(234, 88, 12, 0.2);
-  background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
+  background: linear-gradient(135deg, #5d3c9b 0%, #d4b291 100%);
 `;
 
 const Slide = styled.div`
@@ -131,28 +131,28 @@ const slides = [
     icon: <FaCode />,
     title: 'Программирование',
     description: 'Освойте основы алгоритмизации и программирования. Научитесь создавать эффективные алгоритмы и писать чистый код.',
-    color: '#dc2626'
+    color: '#910101'
   },
   {
     id: 2,
     icon: <FaPalette />,
     title: 'Веб-дизайн',
     description: 'Научитесь создавать современные веб-интерфейсы. Изучите принципы UX/UI дизайна и работу с графическими редакторами.',
-    color: '#ea580c'
+    color: '#5767ad'
   },
   {
     id: 3,
     icon: <FaDatabase />,
     title: 'Базы данных',
     description: 'Изучите проектирование и работу с базами данных. Научитесь создавать эффективные схемы и оптимизировать запросы.',
-    color: '#f97316'
+    color: '#26814c'
   },
   {
     id: 4,
     icon: <FaRocket />,
     title: 'Карьерный рост',
     description: 'Получите востребованные IT-навыки и начните успешную карьеру в технологической индустрии.',
-    color: '#fdba74'
+    color: '#c970b3'
   }
 ];
 
@@ -182,7 +182,7 @@ const Slider = () => {
         <Slide 
           key={slide.id} 
           $active={currentSlide === index}
-          style={{ background: `linear-gradient(135deg, ${slide.color} 0%, #ea580c 100%)` }}
+          style={{ background: `linear-gradient(135deg, ${slide.color} 0%, #cfbfb6 100%)` }}
         >
           <SlideContent $active={currentSlide === index}>
             <SlideIcon>

@@ -13,22 +13,22 @@ async function createAdmin() {
     const existingAdmin = await User.findOne({ where: { username: 'Admin' } });
     
     if (existingAdmin) {
-      console.log('✅ Администратор уже существует');
+      console.log(' Администратор уже существует');
       console.log('   Логин:', existingAdmin.username);
       console.log('   Роль:', existingAdmin.role);
       console.log('   ID:', existingAdmin.id);
 
       const isValid = await existingAdmin.comparePassword('KorokNET');
-      console.log('   Пароль KorokNET работает:', isValid ? '✅ Да' : '❌ Нет');
+      console.log('   Пароль KorokNET работает:', isValid ? ' Да' : ' Нет');
 
       if (!isValid) {
-        console.log('🔄 Обновляем пароль администратора...');
+        console.log(' Обновляем пароль администратора...');
         await existingAdmin.update({ password: 'KorokNET' });
-        console.log('✅ Пароль обновлен');
+        console.log(' Пароль обновлен');
       }
     } else {
 
-      console.log('👑 Создаю администратора...');
+      console.log('Создаю администратора...');
       const admin = await User.create({
         username: 'Admin',
         password: 'KorokNET',
@@ -38,17 +38,17 @@ async function createAdmin() {
         role: 'admin'
       });
       
-      console.log('✅ АДМИНИСТРАТОР СОЗДАН!');
+      console.log(' АДМИНИСТРАТОР СОЗДАН!');
       console.log('   Логин: Admin');
       console.log('   Пароль: KorokNET');
       console.log('   ID:', admin.id);
       console.log('   Роль:', admin.role);
   
       const isValid = await admin.comparePassword('KorokNET');
-      console.log('   Пароль работает:', isValid ? '✅ Да' : '❌ Нет');
+      console.log('   Пароль работает:', isValid ? ' Да' : ' Нет');
     }
     
-    console.log('\n🎉 Готово! Теперь можно войти как администратор:');
+    console.log('\n Готово! Теперь можно войти как администратор:');
     console.log('   На фронтенде нажми "Вход для администратора"');
     console.log('   Или введи вручную:');
     console.log('   Логин: Admin');
@@ -57,7 +57,7 @@ async function createAdmin() {
     process.exit(0);
     
   } catch (error) {
-    console.error('❌ ОШИБКА:', error.message);
+    console.error(' ОШИБКА:', error.message);
     console.error('Детали:', error);
     process.exit(1);
   }

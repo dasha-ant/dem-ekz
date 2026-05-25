@@ -35,7 +35,7 @@ const AuthCard = styled.div`
   max-width: 450px;
   position: relative;
   z-index: 1;
-  border: 1px solid #fed7aa;
+  border: 1px solid #f3e9de;
 `;
 
 const AuthHeader = styled.div`
@@ -49,7 +49,7 @@ const AuthLogo = styled.div`
   justify-content: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
-  color: #ea580c;
+  color: #d1434f;
 `;
 
 const LogoIcon = styled.div`
